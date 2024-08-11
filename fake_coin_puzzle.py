@@ -13,11 +13,31 @@ def get_n() -> int:
         except ValueError:
             print("Invalid input. Please enter a valid integer.")
 
-def makeRandomCoins(n: int) -> List[int]:
-    print(f"Generating {n} coins with one fake coin...")
-    fake_coin_no = random.randrange(n)
-    randomCoins = [random.randrange(0, 4, 2) if i == fake_coin_no else 1 for i in range(n)]
-    print(f"The fake coin is at position {fake_coin_no}.")
+def get_fake_no(n) -> int:
+    while True:
+        try:
+            fake_no = int(input(f"Enter the number of the counterfeit coin (0 to {n-1}): "))
+            if 0 <= fake_no <= n-1:
+                return fake_no
+            else:
+                print(f"Please enter a number between 1 and {n}.")
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+            
+def get_fake_weight():
+    while True:
+        try:
+            fake_weight = int(input("Enter 0 if the fake coin is lighter and 1 if it is heavier: "))
+            if fake_weight not in [0, 1]:
+                print("Invalid input. Please enter 0 or 1.")
+            else:
+                return fake_weight
+        except ValueError:
+            print("Invalid input. Please enter an integer.")
+
+def makeRandomCoins(n: int, fake_no: int, fake_weight: int) -> List[int]:
+    print(f"Generating {n} coins with {'heavier' if fake_weight == 1 else 'lighter'} fake coin in position of {fake_no}")
+    randomCoins = [2*fake_weight if i == fake_no else 1 for i in range(n)]
     return randomCoins
 
 def weigh(coinWeights: List[int], group1: List[int], group2: List[int]) -> int:
@@ -112,14 +132,16 @@ def getNextStatus(coinWeights: List[int], status: List[List[int]], group_left: L
     return nextStatus
 
 def printStatus(status: List[List[int]]) -> None:
-    print("Current progress:")
+    print("\nCurrent progress:")
     print("Coins that could be fake (unknown if heavier or lighter):", status[0])
     print("Coins that could be fake (heavier if fake):", status[1])
     print("Coins that could be fake (lighter if fake):", status[2])
     print("Coins that are normal:", status[3])
 
 n = get_n()  # Get the number of coins from the user
-coinWeights = makeRandomCoins(n)
+fake_no = get_fake_no(n) # Get the number of the fake coin from user
+fake_weight = get_fake_weight()
+coinWeights = makeRandomCoins(n, fake_no, fake_weight)
 status = [[i for i in range(n)], [], [], []]
 print("This is the list of coin weights:")
 print(coinWeights)
