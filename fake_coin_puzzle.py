@@ -108,14 +108,22 @@ def getNextStatus(coinWeights: List[int], status: List[List[int]], group_left: L
         nextStatus[1] = [i for i in group_right if i in status[0] or i in status[1]]
         nextStatus[2] = [i for i in group_left if i in status[0] or i in status[2]]
         nextStatus[3] = [i for i in range(n) if i not in nextStatus[1] and i not in nextStatus[2]]
-        
+    
     return nextStatus
+
+def printStatus(status: List[List[int]]) -> None:
+    print("Current progress:")
+    print("Coins that could be fake (unknown if heavier or lighter):", status[0])
+    print("Coins that could be fake (heavier if fake):", status[1])
+    print("Coins that could be fake (lighter if fake):", status[2])
+    print("Coins that are normal:", status[3])
 
 n = get_n()  # Get the number of coins from the user
 coinWeights = makeRandomCoins(n)
 status = [[i for i in range(n)], [], [], []]
 print("This is the list of coin weights:")
 print(coinWeights)
+printStatus(status)
 
 m = 0
 
@@ -128,6 +136,7 @@ while len(status[0]) + len(status[1]) + len(status[2]) > 1:
     print(f"Group Left: {group_left}")
     print(f"Group Right: {group_right}")
     status = getNextStatus(coinWeights, status, group_left, group_right, group_rest)
+    printStatus(status)
 
 found_no = (status[0] + status[1] + status[2])[0]
 
